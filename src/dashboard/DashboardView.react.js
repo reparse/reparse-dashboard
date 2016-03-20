@@ -47,23 +47,21 @@ export default class DashboardView extends React.Component {
     }
 
     //webhooks requires removal of heroku link code, then it should work.
-    /*
     if (features.hooks && features.hooks.create && features.hooks.read && features.hooks.update && features.hooks.delete) {
       coreSubsections.push({
         name: 'Webhooks',
         link: '/webhooks'
       });
     }
-    */
 
-    /* Jobs not supported
-    if (...) {
+
+    /* Jobs not supported */
+    if (true) {
       coreSubsections.push({
         name: 'Jobs',
         link: '/jobs'
       });
     }
-    */
 
     if (features.logs && features.logs.info && features.logs.error) {
       coreSubsections.push({
@@ -91,15 +89,15 @@ export default class DashboardView extends React.Component {
     if (this.context.currentApp.migration) {
       coreSubsections.push({
         name: 'Migration',
-        link: '/migration',
+        link: '/migration'
       });
     }
     let pushSubsections = [];
 
     // The push UI requires immediate and scheduled push (and some ruby endpoints that we will have to remove)
-    /*
+
     if (features.push && features.push.immediatePush && features.push.scheduledPush) {
-      pushSubsections({
+      pushSubsections.push({
         name: 'Send New Push',
         link: '/push/activity'
       });
@@ -117,28 +115,28 @@ export default class DashboardView extends React.Component {
         name: 'Audiences',
         link: '/push/audiences'
       });
-    }*/
+    }
 
     let analyticsSidebarSections = [];
 
     //These analytics pages may never make it into parse server
-    /*
-    if (...) {
+
+    if (features.analytics) {
       analyticsSidebarSections.push({
         name: 'Overview',
         link: '/analytics/overview'
       });
     }
 
-    if (...) {
+    if (features.analytics) {
       analyticsSidebarSections.push({
         name: 'Explorer',
         link: '/analytics/explorer'
       });
-    }*/
+    }
 
     //These ones might, but require some endpoints to added to Parse Server
-    /*
+
     if (features.analytics && features.analytics.retentionAnalysis) {
       analyticsSidebarSections.push({
         name: 'Retention',
@@ -159,12 +157,12 @@ export default class DashboardView extends React.Component {
         link: '/analytics/slow_queries'
       });
     }
-    */
+
 
     let settingsSections = [];
 
     // Settings - nothing remotely like this in parse-server yet. Maybe it will arrive soon.
-    /*
+
     if (features.generalSettings) {
       settingsSections.push({
         name: 'General',
@@ -198,16 +196,16 @@ export default class DashboardView extends React.Component {
         name: 'Hosting and Emails',
         link: '/settings/hosting'
       });
-    }*/
+    }
 
-    let appSidebarSections = []
+    let appSidebarSections = [];
 
     if (coreSubsections.length > 0) {
       appSidebarSections.push({
         name: 'Core',
         icon: 'core',
         link: '/browser',
-        subsections: coreSubsections,
+        subsections: coreSubsections
       });
     }
 
@@ -217,7 +215,7 @@ export default class DashboardView extends React.Component {
         icon: 'push-outline',
         link: '/push',
         style: {paddingLeft: '16px'},
-        subsections: pushSubsections,
+        subsections: pushSubsections
       });
     }
 
@@ -237,7 +235,7 @@ export default class DashboardView extends React.Component {
         link: '/settings',
         subsections: settingsSections
       });
-    };
+    }
 
     let sidebar = (
     <Sidebar

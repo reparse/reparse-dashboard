@@ -75,14 +75,24 @@ let AppCard = ({
     </div>;
 
   return <li onClick={canBrowse}>
-    {icon ? <a className={styles.icon}><img src={icon} /></a> : null}
+    <a className={styles.icon}>
+      {app.icon ? <img src={app.icon} /> : <Icon width={56} height={56} name='blank-app-outline' fill='#1E384D' />}
+    </a>
     <div className={styles.details}>
       <a className={styles.appname}>{app.name}</a>
       {versionMessage}
     </div>
     <CountsSection className={styles.glance} title='At a glance'>
+      <Metric number={dash(app.requests, prettyNumber(app.requests))} label='requests' />
       <Metric number={dash(app.users, prettyNumber(app.users))} label='total users' />
       <Metric number={dash(app.installations, prettyNumber(app.installations))} label='total installations' />
+      <Metric number={dash(app.requestLimit)} label='requests/s' />
+      <Metric number={dash(app.requestLimit, Math.floor(app.requestLimit / 20))} label='background job' />
+      <Metric number={dash(app.requestLimit, '$' + (app.requestLimit - 30) * 10)} label='monthly' />
+      <a href={html`/apps/${app.slug}/settings`} className={styles.edit} onClick={(e) => {
+          e.stopPropagation();
+          history.pushState(null, html`/apps/${app.slug}/settings`);
+        }}>Edit</a>
     </CountsSection>
   </li>
 }
@@ -126,7 +136,9 @@ export default class AppsIndex extends React.Component {
               <Icon width={110} height={110} name='cloud-surprise' fill='#1e3b4d' />
             </div>
             <div className={styles.alert}>You don't have any apps</div>
+            <a href='javascript:;' role='button' className={styles.cta} onClick={() => this.setState({ dialogOpen: true })}>Create a new app</a>
           </div>
+          <NewAppDialog open={this.state.dialogOpen} onCancel={() => this.setState({ dialogOpen: false })} />
         </div>
       );
     }
@@ -150,6 +162,13 @@ export default class AppsIndex extends React.Component {
             onChange={this.updateSearch.bind(this)}
             value={this.state.search}
             placeholder='Start typing to filter&hellip;' />
+          <a
+            href='javascript:;'
+            role='button'
+            className={styles.create}
+            onClick={() => this.setState({ dialogOpen: true })}>
+            Create a new app
+          </a>
         </div>
         <ul className={styles.apps}>
           {apps.map(app =>
