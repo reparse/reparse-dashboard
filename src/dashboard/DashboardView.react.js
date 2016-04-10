@@ -100,6 +100,7 @@ export default class DashboardView extends React.Component {
         link: '/push/new'
       });
     }
+
     // The push UI requires immediate and scheduled push (and some ruby endpoints that we will have to remove)
     /*
 
@@ -116,6 +117,7 @@ export default class DashboardView extends React.Component {
         link: '/push/audiences'
       });
     }
+    */
 
     let analyticsSidebarSections = [];
 
