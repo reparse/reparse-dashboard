@@ -5,6 +5,10 @@ import React              from 'react';
 import styles             from 'components/LoginForm/LoginForm.scss';
 import { verticalCenter } from 'stylesheets/base.scss';
 
+const facebookSupports = false,
+  githubSupports = false,
+  googleSupports = false
+
 // Class-style component, because we need refs
 export default class LoginForm extends React.Component {
   render() {
@@ -34,16 +38,35 @@ export default class LoginForm extends React.Component {
         </form>
         <div className={styles.oauth}>
           <span>Or, log in with</span>
-          <a className={styles.facebook} href='/auth/facebook'><Icon name='facebook' width={18} height={18} fill='#ffffff' /></a>
-          <a className={styles.github} href='/auth/github'><Icon name='github' width={18} height={18} fill='#ffffff' /></a>
-          <a className={styles.google} href='/auth/google_oauth2'><Icon name='google' width={18} height={18} fill='#ffffff' /></a>
+          {(function(showMe) {
+          if (showMe) {
+            return (<div>IIFE's are cool</div>); 
+          } 
+          })(this.props.showMe)}
+          {ngIf(
+            facebookSupports,
+            <a className={styles.facebook} href='/auth/facebook'><Icon name='facebook' width={18} height={18} fill='#ffffff' /></a>)}
+          {ngIf(
+            githubSupports,
+            <a className={styles.github} href='/auth/github'><Icon name='github' width={18} height={18} fill='#ffffff' /></a>)}
+          {ngIf(
+            googleSupports,
+            <a className={styles.google} href='/auth/google_oauth2'><Icon name='google' width={18} height={18} fill='#ffffff' /></a>)}
         </div>
         <a
           className={styles.swap}
-          href={this.props.swapTarget}>
+          href="javascript:;"
+          onClick={this.props.swapAction}>
           {this.props.swapText}
         </a>
       </div>
     );
   }
+}
+
+function ngIf(show, element) {
+  if (!show) {
+    return null;
+  }
+  return element;
 }
