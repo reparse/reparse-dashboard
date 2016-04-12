@@ -114,7 +114,7 @@ class Dashboard extends React.Component {
       configLoadingState: AsyncStatus.PROGRESS,
       newFeaturesInLatestVersion: [],
     };
-    setBasePath(props.path);
+    setBasePath('/');
   }
 
   componentDidMount() {
