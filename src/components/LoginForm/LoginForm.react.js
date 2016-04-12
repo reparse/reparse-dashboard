@@ -1,4 +1,4 @@
-import CSRFInput from 'components/CSRFInput/CSRFInput.react';
+import CSRFInput          from 'components/CSRFInput/CSRFInput.react';
 import Icon               from 'components/Icon/Icon.react';
 import PropTypes          from 'lib/PropTypes';
 import React              from 'react';
@@ -10,7 +10,7 @@ export default class LoginForm extends React.Component {
   render() {
     return (
       <div className={styles.login} style={{ marginTop: this.props.marginTop || '-220px' }}>
-        <Icon width={80} height={80} name='infinity' fill='#093A59' />
+        <Icon width={80} height={80} name='reparse' fill='#093A59' />
         <form method='post' ref='form' action={this.props.endpoint} className={styles.form}>
           <CSRFInput />
           <div className={styles.header}>{this.props.header}</div>
