@@ -54,7 +54,7 @@ import {
   Route,
   Redirect
 } from 'react-router';
-import Login              from './../auth/Login';
+import Login              from './Auth/Login';
 
 let App = React.createClass({
   render() {

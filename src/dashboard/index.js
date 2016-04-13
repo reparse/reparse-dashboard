@@ -11,7 +11,7 @@ import installDevTools from 'immutable-devtools';
 import Parse           from 'parse';
 import React           from 'react';
 import ReactDOM        from 'react-dom';
-import Auth            from './Auth';
+import Auth            from './Auth/Auth';
 import 'babel-polyfill';
 
 require('stylesheets/fonts.scss');

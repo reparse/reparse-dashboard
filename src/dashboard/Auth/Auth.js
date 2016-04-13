@@ -11,14 +11,14 @@ import {
 import AppsManager from 'lib/AppsManager';
 import Loader      from 'components/Loader/Loader.react';
 import { center }  from 'stylesheets/base.scss';
-import Login       from 'auth/Login';
-import Signup      from 'auth/Signup';
-import Dashboard   from './Dashboard';
-import config      from './config';
-import contants    from './constants';
+import Dashboard   from './../Dashboard';
+import config      from './../config';
+import contants    from './../constants';
+import Login       from './Login';
+import Signup      from './Signup';
 
 class Auth extends React.Component {
-	constructor() {
+	constructor(props) {
 		super();
 		this.state = {
 			autenticated: null
