@@ -11,8 +11,8 @@ import {
 import AppsManager from 'lib/AppsManager';
 import Loader      from 'components/Loader/Loader.react';
 import { center }  from 'stylesheets/base.scss';
-import Login       from './../auth/Login';
-import Signup      from './../auth/Signup';
+import Login       from 'auth/Login';
+import Signup      from 'auth/Signup';
 import Dashboard   from './Dashboard';
 import config      from './config';
 import contants    from './constants';
@@ -47,9 +47,10 @@ class Auth extends React.Component {
 		}
 		if (this.state.autenticated === false) {
 			return <Router history={browserHistory}>
-				<Route path="/" component={Login}>
-					<Route path="signup" component={Signup}/>
-				</Route>
+				<Route path="/" component={Login} />
+				<Route path="/login" component={Login} />
+				<Route path="/signup" component={Signup} />
+				<Route path="*" component={Login} />
 			</Router>;
 		}
 		return <Dashboard />;

@@ -16,7 +16,6 @@ export default class LoginForm extends React.Component {
       <div className={styles.login} style={{ marginTop: this.props.marginTop || '-220px' }}>
         <Icon width={80} height={80} name='reparse' fill='#093A59' />
         <form method='post' ref='form' action={this.props.endpoint} className={styles.form}>
-          <CSRFInput />
           <div className={styles.header}>{this.props.header}</div>
           {this.props.children}
           <div className={styles.footer}>
@@ -37,12 +36,8 @@ export default class LoginForm extends React.Component {
             value={this.props.action} />
         </form>
         <div className={styles.oauth}>
-          <span>Or, log in with</span>
-          {(function(showMe) {
-          if (showMe) {
-            return (<div>IIFE's are cool</div>); 
-          } 
-          })(this.props.showMe)}
+          {ngIf(facebookSupports || githubSupports || googleSupports,
+            <span>Or, log in with</span>)}
           {ngIf(
             facebookSupports,
             <a className={styles.facebook} href='/auth/facebook'><Icon name='facebook' width={18} height={18} fill='#ffffff' /></a>)}

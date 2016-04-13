@@ -54,6 +54,7 @@ import {
   Route,
   Redirect
 } from 'react-router';
+import Login              from './../auth/Login';
 
 let App = React.createClass({
   render() {
@@ -256,6 +257,8 @@ class Dashboard extends React.Component {
 
         <Redirect from='account' to='/account/overview' />
         <Route path='account/overview' component={AccountSettingsPage} />
+
+        <Route path="login" component={Login} />
       </Route>
       <Route path='*' component={FourOhFour} />
     </Router>

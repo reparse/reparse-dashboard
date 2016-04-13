@@ -1,8 +1,11 @@
 import React     from 'react';
-import { Link }  from 'react-router'
+import {
+  Link,
+  browserHistory
+}  from 'react-router'
 import LoginForm from 'components/LoginForm/LoginForm.react';
 import LoginRow  from 'components/LoginRow/LoginRow.react';
-import styles    from './Login.scss';
+import styles    from './form.scss';
 
 export default class Login extends React.Component {
   constructor() {
@@ -56,7 +59,7 @@ export default class Login extends React.Component {
               I don't have a Parse account <span style={{ fontSize: 20, verticalAlign: 'middle' }}>😕</span>
             </span>
           }
-          swapTarget='/signup'>
+          swapAction={signup}>
           <LoginRow
             label='Email'
             input={<input name='user_session[email]' type='email' />} />
