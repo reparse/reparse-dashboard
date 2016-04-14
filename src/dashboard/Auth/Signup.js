@@ -4,10 +4,9 @@ import Parse       from 'parse';
 import {
 	browserHistory
 }                  from 'react-router';
-import AppsManager from 'lib/AppsManager';
 import Icon        from 'components/Icon/Icon.react';
 import LoginRow    from 'components/LoginRow/LoginRow.react';
-import contants    from './../constants';
+import AdminApp    from './../AdminApp';
 import styles      from './form.scss';
 
 export default class Signup extends React.Component {
@@ -48,16 +47,11 @@ export default class Signup extends React.Component {
 			errors.push('Please, confirm the password.');
 		}
 
-		if (
-			this.refs.email.value.length === 0 ||
-			!emailRegexp.test(this.refs.email.value)
-		) {
+		if (!emailRegexp.test(this.refs.email.value)) {
 			errors.push('Please, put valid email.');
 		}
 
-		this.setState({
-			errors
-		});
+		this.setState({ errors });
 	}
 
 	handleSubmit(e) {
@@ -69,8 +63,7 @@ export default class Signup extends React.Component {
 
 		this.state.backendErrors = [];
 
-		const adminApp = AppsManager.findAppByName(contants.ADMIN_APP_NAME);
-		adminApp.setParseKeys();
+		AdminApp.setParseKeys();
 
 		const user = new Parse.User();
 		user.set("username", this.refs.username.value);
@@ -78,9 +71,7 @@ export default class Signup extends React.Component {
 		user.set("email", this.refs.email.value);
 
 		user.signUp(null, {
-			success: function(user) {
-				console.log(user);
-			},
+			success: this.props.route.onLogin,
 			error: (user, error) => {
 				this.state.backendErrors.push(error.message);
 				this.validate();
@@ -97,7 +88,7 @@ export default class Signup extends React.Component {
 			<div className={styles['login-bg']}>
 				<div className={styles.main} style={{ marginTop: '-220px' }}>
 					<Icon width={80} height={80} name='reparse' fill='#093A59' />
-					<form method='post' ref='form' className={styles.form}>
+					<form className={styles.form}>
 						<div className={styles.header}>Create an account</div>
 						<LoginRow
 							label='Username'
@@ -124,15 +115,11 @@ export default class Signup extends React.Component {
 					<a
 						className={styles.swap}
 						href="javascript:;"
-						onClick={goToLogin}>
+						onClick={browserHistory.push.bind(browserHistory, '/login')}>
 							Already have account? Login
 					</a>
 				</div>
 			</div>
 		);
 	}
-}
-
-function goToLogin() {
-	browserHistory.push('/login');
 }
