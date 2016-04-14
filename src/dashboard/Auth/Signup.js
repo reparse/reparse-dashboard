@@ -18,7 +18,8 @@ export default class Signup extends React.Component {
 			email: '',
 			password: '',
 			confirmation: '',
-			errors: []
+			errors: [],
+			backendErrors: []
 		}
 	}
 
@@ -26,42 +27,30 @@ export default class Signup extends React.Component {
 		this.validate();
 	}
 
-	setEmail(e) {
-		this.state.email = e.target.value;
-		this.validate();
-	}
-
-	setPassword(e) {
-		this.state.password = e.target.value;
-		this.validate();
-	}
-
-	setConfirmation(e) {
-		this.state.confirmation = e.target.value;
-		this.validate();
-	}
-
 	validate() {
-		const errors = [];
+		const errors = this.state.backendErrors,
+			emailRegexp = /^[^@]+@[^@]+$/;
 
-		if (
-			typeof this.state.confirmation !== 'string' ||
-			this.state.password.length === 0
-		) {
+		this.state.backendErrors = [];
+
+		if (this.refs.username.value.length === 0) {
+			errors.push('Username must be not empty.');
+		}
+
+		if (this.refs.password.value.length === 0) {
 			errors.push('Password must be not empty.');
 		}
 
 		if (
-			typeof this.state.confirmation !== 'string' ||
-			this.state.confirmation.length === 0 ||
-			this.state.confirmation !== this.state.password
+			this.refs.confirmation.value.length === 0 ||
+			this.refs.confirmation.value !== this.refs.password.value
 		) {
 			errors.push('Please, confirm the password.');
 		}
 
 		if (
-			typeof this.state.email !== 'string' ||
-			this.state.email.length === 0
+			this.refs.email.value.length === 0 ||
+			!emailRegexp.test(this.refs.email.value)
 		) {
 			errors.push('Please, put valid email.');
 		}
@@ -78,30 +67,31 @@ export default class Signup extends React.Component {
 			return;
 		}
 
+		this.state.backendErrors = [];
+
 		const adminApp = AppsManager.findAppByName(contants.ADMIN_APP_NAME);
 		adminApp.setParseKeys();
 
 		const user = new Parse.User();
-		user.set("password", this.state.password);
-		user.set("email", this.state.email);
+		user.set("username", this.refs.username.value);
+		user.set("password", this.refs.password.value);
+		user.set("email", this.refs.email.value);
 
 		user.signUp(null, {
 			success: function(user) {
-				alert('success');
-				console.log(Parse.User.current(), user);
+				console.log(user);
 			},
-			error: function(user, error) {
-				// Show the error message somewhere and let the user try again.
-				alert("Error: " + error.code + " " + error.message);
-				console.log(Parse.User.current(), user, error);
+			error: (user, error) => {
+				this.state.backendErrors.push(error.message);
+				this.validate();
 			}
 		});
 	}
 
 	render() {
 
-		const errors = this.state.errors.map(error =>
-			(<div>{error}</div>));
+		const errors = this.state.errors.map((error, i) =>
+			(<div key={i}>{error}</div>));
 
 		return (
 			<div className={styles['login-bg']}>
@@ -110,14 +100,17 @@ export default class Signup extends React.Component {
 					<form method='post' ref='form' className={styles.form}>
 						<div className={styles.header}>Create an account</div>
 						<LoginRow
+							label='Username'
+							input={<input ref='username' name='username' type='text' onChange={this.validate.bind(this)} />} />
+						<LoginRow
 							label='Email'
-							input={<input name='email' onChange={this.setEmail.bind(this)} type='email' />} />
+							input={<input ref='email' name='email' type='email' onChange={this.validate.bind(this)} />} />
 						<LoginRow
 							label='Password'
-							input={<input name='password' onChange={this.setPassword.bind(this)} type='password' />} />
+							input={<input ref='password' name='password' type='password' onChange={this.validate.bind(this)} />} />
 						<LoginRow
 							label='Confirm'
-							input={<input name='password-confirmation' onChange={this.setConfirmation.bind(this)} type='password' />} />
+							input={<input ref='confirmation' name='confirmation' type='password' onChange={this.validate.bind(this)} />} />
 						{errors.length ?
 							<div className={styles.error}>
 								{errors}

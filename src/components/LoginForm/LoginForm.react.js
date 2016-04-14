@@ -35,19 +35,19 @@ export default class LoginForm extends React.Component {
             className={styles.submit}
             value={this.props.action} />
         </form>
-        <div className={styles.oauth}>
-          {ngIf(facebookSupports || githubSupports || googleSupports,
-            <span>Or, log in with</span>)}
-          {ngIf(
-            facebookSupports,
-            <a className={styles.facebook} href='/auth/facebook'><Icon name='facebook' width={18} height={18} fill='#ffffff' /></a>)}
-          {ngIf(
-            githubSupports,
-            <a className={styles.github} href='/auth/github'><Icon name='github' width={18} height={18} fill='#ffffff' /></a>)}
-          {ngIf(
-            googleSupports,
-            <a className={styles.google} href='/auth/google_oauth2'><Icon name='google' width={18} height={18} fill='#ffffff' /></a>)}
-        </div>
+        {ngIf(facebookSupports || githubSupports || googleSupports,
+          <div className={styles.oauth}>
+              <span>Or, log in with</span>
+            {ngIf(
+              facebookSupports,
+              <a className={styles.facebook} href='/auth/facebook'><Icon name='facebook' width={18} height={18} fill='#ffffff' /></a>)}
+            {ngIf(
+              githubSupports,
+              <a className={styles.github} href='/auth/github'><Icon name='github' width={18} height={18} fill='#ffffff' /></a>)}
+            {ngIf(
+              googleSupports,
+              <a className={styles.google} href='/auth/google_oauth2'><Icon name='google' width={18} height={18} fill='#ffffff' /></a>)}
+          </div>)}
         <a
           className={styles.swap}
           href="javascript:;"
