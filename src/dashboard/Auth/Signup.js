@@ -18,12 +18,9 @@ export default class Signup extends React.Component {
 			password: '',
 			confirmation: '',
 			errors: [],
-			backendErrors: []
+			backendErrors: [],
+			requestInProcess: false
 		}
-	}
-
-	componentDidMount() {
-		this.validate();
 	}
 
 	validate() {
@@ -70,9 +67,11 @@ export default class Signup extends React.Component {
 		user.set("password", this.refs.password.value);
 		user.set("email", this.refs.email.value);
 
+		this.setState({ requestInProcess: true });
 		user.signUp(null, {
 			success: this.props.route.onLogin,
 			error: (user, error) => {
+				this.setState({ requestInProcess: false });
 				this.state.backendErrors.push(error.message);
 				this.validate();
 			}
@@ -108,7 +107,7 @@ export default class Signup extends React.Component {
 							</div> : null}
 						<input
 							type='submit'
-							disabled={errors.length}
+							disabled={errors.length || this.state.requestInProcess}
 							onClick={this.handleSubmit.bind(this)}
 							className={styles.submit} />
 					</form>

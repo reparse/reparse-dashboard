@@ -1,7 +1,9 @@
 import React              from 'react';
+import Parse              from 'parse';
 import { browserHistory } from 'react-router'
 import LoginRow           from 'components/LoginRow/LoginRow.react';
 import Icon               from 'components/Icon/Icon.react';
+import AdminApp           from './../AdminApp';
 import { verticalCenter } from 'stylesheets/base.scss';
 import styles             from './form.scss';
 
@@ -10,6 +12,52 @@ const facebookSupports = false,
 	googleSupports = false;
 
 export default class Login extends React.Component {
+	constructor() {
+		super();
+
+		this.state = {
+			requestInProcess: false,
+			errors: [],
+			backendErrors: []
+		};
+	}
+
+	validate() {
+		const errors = this.state.backendErrors;
+
+		this.state.backendErrors = [];
+
+		if (!this.refs.username.value.length) {
+			errors.push('Username must be non-empty.');
+		}
+
+		if (!this.refs.password.value.length) {
+			errors.push('Password must be non-empty.');
+		}
+
+		this.setState({ errors });
+	}
+
+	handleSubmit(e) {
+		e.preventDefault();
+		this.validate();
+		if (this.state.errors.length) {
+			return;
+		}
+
+		AdminApp.setParseKeys();
+
+		this.setState({ requestInProcess: true });
+		Parse.User.logIn(this.refs.username.value, this.refs.password.value, {
+			success: this.props.route.onLogin,
+			error: (user, error) => {
+				this.setState({ requestInProcess: false });
+				this.state.backendErrors.push(error.message);
+				this.validate();
+			}
+		});
+	}
+
 	render() {
 		return (
 			<div className={styles['login-bg']}>
@@ -18,14 +66,14 @@ export default class Login extends React.Component {
 					<form className={styles.form}>
 						<div className={styles.header}>Access your Dashboard</div>
 						<LoginRow
-							label='Email'
-							input={<input name='user_session[email]' type='email' />} />
+							label='Username'
+							input={<input onChange={this.validate.bind(this)} ref='username' />} />
 						<LoginRow
 							label='Password'
-							input={<input name='user_session[password]' type='password' />} />
-						{this.errors ?
+							input={<input onChange={this.validate.bind(this)} ref='password' />} />
+						{this.state.errors.length ?
 							<div className={styles.error}>
-								{this.errors}
+								{this.state.errors.map((error, i) => <div key={i}>{error}</div>)}
 							</div> : null}
 						<div className={styles.footer}>
 							<div className={verticalCenter} style={{ width: '100%' }}>
@@ -34,13 +82,8 @@ export default class Login extends React.Component {
 						</div>
 						<input
 							type='submit'
-							disabled={!!this.props.disableSubmit}
-							onClick={() => {
-								if (this.props.disableSubmit) {
-									return;
-								}
-								this.refs.form.submit()
-							}}
+							disabled={this.state.errors.length || this.state.requestInProcess}
+							onClick={this.handleSubmit.bind(this)}
 							className={styles.submit} />
 					</form>
 					{ngIf(facebookSupports || githubSupports || googleSupports,

@@ -60,11 +60,10 @@ class Auth extends React.Component {
 		}
 		if (this.state.autenticated === false) {
 			return <Router history={browserHistory}>
-				<Route path="/" component={Login} />
 				<Route path="/login" onLogin={this.checkLogin.bind(this)} component={Login} />
 				<Route path="/signup" onLogin={this.checkLogin.bind(this)} component={Signup} />
 				<Route path="/forgot" component={Forgot} />
-				<Route path="*" component={Login} />
+				<Route path="*" onLogin={this.checkLogin.bind(this)} component={Login} />
 			</Router>;
 		}
 		return <Dashboard />;
