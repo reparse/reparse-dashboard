@@ -11,11 +11,10 @@ import installDevTools from 'immutable-devtools';
 import Parse           from 'parse';
 import React           from 'react';
 import ReactDOM        from 'react-dom';
-import Dashboard       from './Dashboard';
+import Auth            from './Auth/Auth';
 import 'babel-polyfill';
 
 require('stylesheets/fonts.scss');
 installDevTools(Immutable);
 
-var path = window.PARSE_DASHBOARD_PATH || '/';
-ReactDOM.render(<Dashboard path={path}/>, document.getElementById('browser_mount'));
+ReactDOM.render(<Auth/>, document.getElementById('browser_mount'));

@@ -1,0 +1,7 @@
+export default {
+	"adminApp": {
+		"serverURL": "https://api.parse.com/1",
+		"appId": "M6RMt8mFrVD51LP0iMGMTksGvlx9JlnVaT35uvmX",
+		"javascriptKey": "B0GBgJ56TGr6tk94WF0rNYYzlIy32xTQWDHYeLru"
+	}
+};
