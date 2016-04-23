@@ -77,7 +77,7 @@ let AppCard = ({
 
   return <li onClick={canBrowse}>
     <a className={styles.icon}>
-      {app.icon ? <img src={app.icon} /> : <Icon width={56} height={56} name='blank-app-outline' fill='#1E384D' />}
+      {icon ? <img src={'appicons/' + icon} width={56} height={56}/> : <Icon width={56} height={56} name='blank-app-outline' fill='#1E384D' />}
     </a>
     <div className={styles.details}>
       <a className={styles.appname}>{app.name}</a>
@@ -175,7 +175,7 @@ export default class AppsIndex extends React.Component {
         <ul className={styles.apps}>
           {apps.map(app =>
             app.name.toLowerCase().indexOf(search) > -1 ?
-              <AppCard key={app.slug} app={app} /> :
+              <AppCard key={app.slug} app={app} icon={app.icon ? app.icon : null}/> :
               null
           )}
         </ul>
