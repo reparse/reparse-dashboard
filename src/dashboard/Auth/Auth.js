@@ -54,6 +54,10 @@ class Auth extends React.Component {
 		}
 	}
 
+	flushLogin() {
+		this.setState({autenticated: false});
+	}
+
 	render() {
 		if (this.state.autenticated === null) {
 			return <div className={center}><Loader/></div>;
@@ -66,7 +70,7 @@ class Auth extends React.Component {
 				<Route path="*" onLogin={this.checkLogin.bind(this)} component={Login} />
 			</Router>;
 		}
-		return <Dashboard />;
+		return <Dashboard onAuthError={this.flushLogin.bind(this)} />;
 	}
 }
 

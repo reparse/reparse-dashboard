@@ -14,6 +14,7 @@ import html          from 'lib/htmlString';
 import Icon          from 'components/Icon/Icon.react';
 import joinWithFinal from 'lib/joinWithFinal';
 import LiveReload    from 'components/LiveReload/LiveReload.react';
+import NewAppDialog  from 'dashboard/Apps/NewAppDialog.react';
 import pluralize     from 'lib/pluralize';
 import prettyNumber  from 'lib/prettyNumber';
 import React         from 'react';
@@ -102,7 +103,7 @@ let AppCard = ({
 export default class AppsIndex extends React.Component {
   constructor() {
     super();
-    this.state = { search: '' };
+    this.state = { search: '', dialogOpen: false };
     this.focusField = this.focusField.bind(this);
   }
 
