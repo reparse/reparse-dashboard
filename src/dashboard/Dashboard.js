@@ -47,8 +47,6 @@ import UsersSettings      from './Settings/UsersSettings.react';
 import Webhooks           from './Data/Webhooks/Webhooks.react';
 import { AsyncStatus }    from 'lib/Constants';
 import { center }         from 'stylesheets/base.scss';
-import { get }            from 'lib/AJAX';
-import { setBasePath }    from 'lib/AJAX';
 import {
   Router,
   Route,
@@ -116,7 +114,6 @@ class Dashboard extends React.Component {
       configLoadingState: AsyncStatus.PROGRESS,
       newFeaturesInLatestVersion: [],
     };
-    setBasePath('/');
   }
 
   componentDidMount() {

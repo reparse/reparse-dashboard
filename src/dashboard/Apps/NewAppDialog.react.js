@@ -1,21 +1,21 @@
-import AppsManager                       from 'lib/AppsManager';
-import Dropdown                          from 'components/Dropdown/Dropdown.react';
-import DropdownOption                    from 'components/Dropdown/Option.react';
-import Field                             from 'components/Field/Field.react';
-import FormModal                         from 'components/FormModal/FormModal.react';
-import FormNote                          from 'components/FormNote/FormNote.react';
-import history                           from 'dashboard/history';
-import Icon                              from 'components/Icon/Icon.react';
-import Label                             from 'components/Label/Label.react';
-import Modal                             from 'components/Modal/Modal.react';
-import React                             from 'react';
-import SliderWrap                        from 'components/SliderWrap/SliderWrap.react';
-import styles                            from './NewAppDialog.scss';
-import TextInput                         from 'components/TextInput/TextInput.react';
-import validateAndSubmitConnectionString from 'lib/validateAndSubmitConnectionString';
-import { get }                           from 'lib/AJAX';
-import { Link }                          from 'react-router';
-import { Promise }                       from 'parse';
+import AppsManager    from 'lib/AppsManager';
+import Dropdown       from 'components/Dropdown/Dropdown.react';
+import DropdownOption from 'components/Dropdown/Option.react';
+import Field          from 'components/Field/Field.react';
+import FormModal      from 'components/FormModal/FormModal.react';
+import FormNote       from 'components/FormNote/FormNote.react';
+import history        from 'dashboard/history';
+import Icon           from 'components/Icon/Icon.react';
+import Label          from 'components/Label/Label.react';
+import Modal          from 'components/Modal/Modal.react';
+import React          from 'react';
+import SliderWrap     from 'components/SliderWrap/SliderWrap.react';
+import styles         from './NewAppDialog.scss';
+import TextInput      from 'components/TextInput/TextInput.react';
+import { get }        from 'lib/AJAX';
+import { Link }       from 'react-router';
+import { Promise }    from 'parse';
+import AdminApp       from './../AdminApp';
 
 const SHOW_NEW_APP_FORM_CONNECTION_STRING = false;
 
@@ -29,6 +29,18 @@ export default class NewAppDialog extends React.Component {
       connectionWarnings: [],
       showConnectionValidationErrors: true,
     };
+  }
+
+  createApp() {
+    // ! TODO: custom connection string ???
+    AdminApp.setParseKeys();
+    return AdminApp.apiRequest('POST', 'apps', { appName: this.state.name })
+      .then((data) => {
+        const apps = data.results;
+        this.processApps(apps);
+      })
+      .fail(this.props.onAuthError);
+      return;
   }
 
   render() {
@@ -91,20 +103,7 @@ export default class NewAppDialog extends React.Component {
         title='Create a new app'
         width={this.state.databaseType === 'parse' ? 600 : 900}
         open={this.props.open}
-        onSubmit={() => {
-          if (this.state.databaseType === 'custom') {
-            let promise = validateAndSubmitConnectionString(
-              this.state.connectionURL,
-              this.state.connectionWarnings,
-              warnings => this.setState({connectionWarnings: warnings}),
-              connectionString => AppsManager.create(this.state.name, connectionString)
-            );
-            promise.fail(({ error }) => this.setState({ showConnectionValidationErrors: error !== 'Warnings' }));
-            return promise;
-          } else {
-            return AppsManager.create(this.state.name);
-          }
-        }}
+        onSubmit={this.createApp.bind(this)}
         showErrors={this.state.showConnectionValidationErrors}
         onClose={this.props.onCancel}
         icon='blank-app-outline'
