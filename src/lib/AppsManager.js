@@ -41,20 +41,6 @@ const AppsManager = {
     return null;
   },
 
-  create(name, connectionURL) {
-    let payload = {
-      parse_app: { name }
-    };
-    if (connectionURL) {
-      payload.parse_app.connectionString = connectionURL;
-    }
-    return post('/apps', payload).then((response) => {
-      let newApp = new ParseApp(response.app);
-      appsStore.push(newApp);
-      return newApp;
-    });
-  },
-
   deleteApp(slug, password) {
     return del('/apps/' + slug + '?password_confirm_delete=' + password).then(() => {
       for (let i = 0; i < appsStore.length; i++) {

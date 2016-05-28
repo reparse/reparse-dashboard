@@ -47,14 +47,13 @@ import UsersSettings      from './Settings/UsersSettings.react';
 import Webhooks           from './Data/Webhooks/Webhooks.react';
 import { AsyncStatus }    from 'lib/Constants';
 import { center }         from 'stylesheets/base.scss';
-import { get }            from 'lib/AJAX';
-import { setBasePath }    from 'lib/AJAX';
 import {
   Router,
   Route,
   Redirect
 } from 'react-router';
 import Login              from './Auth/Login';
+import AdminApp           from './AdminApp';
 
 let App = React.createClass({
   render() {
@@ -115,66 +114,77 @@ class Dashboard extends React.Component {
       configLoadingState: AsyncStatus.PROGRESS,
       newFeaturesInLatestVersion: [],
     };
-    setBasePath('/');
   }
 
   componentDidMount() {
-    get('/parse-dashboard-config.json').then(({ apps, newFeaturesInLatestVersion = [] }) => {
-      this.setState({ newFeaturesInLatestVersion });
-      let appInfoPromises = apps.map(app => {
-        if (app.serverURL.startsWith('https://api.parse.com/1')) {
-          //api.parse.com doesn't have feature availability endpoint, fortunately we know which features
-          //it supports and can hard code them
-          app.serverInfo = PARSE_DOT_COM_SERVER_INFO;
-          return Parse.Promise.as(app);
-        } else {
-          app.serverInfo = {}
-          return new ParseApp(app).apiRequest(
-            'GET',
-            'serverInfo',
-            {},
-            { useMasterKey: true }
-          ).then(serverInfo => {
-            app.serverInfo = serverInfo;
-            return app;
-          }, error => {
-            if (error.code === 100) {
-              app.serverInfo = {
-                error: 'unable to connect to server',
-                enabledFeatures: {},
-                parseServerVersion: "unknown"
-              }
-              return Parse.Promise.as(app);
-            } else if (error.code === 107) {
-              app.serverInfo = {
-                error: 'server version too low',
-                enabledFeatures: {},
-                parseServerVersion: "unknown"
-              }
-              return Parse.Promise.as(app);
-            } else {
-              app.serverInfo = {
-                error: error.message || 'unknown error',
-                enabledFeatures: {},
-                parseServerVersion: "unknown"
-              }
-              return Parse.Promise.as(app);
+    AdminApp.setParseKeys();
+    AdminApp.apiRequest('GET', 'apps')
+      .then((data) => {
+        const apps = data.results;
+        this.processApps(apps);
+      })
+      .fail(this.props.onAuthError);
+      return;
+  }
+
+  processApps(apps) {
+    // ! TODO: get newFeaturesInLatestVersion
+    const newFeaturesInLatestVersion = [];
+    this.setState({ newFeaturesInLatestVersion });
+    let appInfoPromises = apps.map(app => {
+      if (app.serverURL.startsWith('https://api.parse.com/1')) {
+        //api.parse.com doesn't have feature availability endpoint, fortunately we know which features
+        //it supports and can hard code them
+        app.serverInfo = PARSE_DOT_COM_SERVER_INFO;
+        return Parse.Promise.as(app);
+      } else {
+        app.serverInfo = {}
+        return new ParseApp(app).apiRequest(
+          'GET',
+          'serverInfo',
+          {},
+          { useMasterKey: true }
+        ).then(serverInfo => {
+          app.serverInfo = serverInfo;
+          return app;
+        }, error => {
+          if (error.code === 100) {
+            app.serverInfo = {
+              error: 'unable to connect to server',
+              enabledFeatures: {},
+              parseServerVersion: "unknown"
             }
-          });
-        }
-      });
-      return Parse.Promise.when(appInfoPromises);
-    }).then(function() {
-      Array.prototype.slice.call(arguments).forEach(app => {
-        AppsManager.addApp(app);
-      });
-      this.setState({ configLoadingState: AsyncStatus.SUCCESS });
-    }.bind(this)).fail(({ error }) => {
-      this.setState({
-        configLoadingError: error,
-        configLoadingState: AsyncStatus.FAILED
-      });
+            return Parse.Promise.as(app);
+          } else if (error.code === 107) {
+            app.serverInfo = {
+              error: 'server version too low',
+              enabledFeatures: {},
+              parseServerVersion: "unknown"
+            }
+            return Parse.Promise.as(app);
+          } else {
+            app.serverInfo = {
+              error: error.message || 'unknown error',
+              enabledFeatures: {},
+              parseServerVersion: "unknown"
+            }
+            return Parse.Promise.as(app);
+          }
+        });
+      }
     });
+    Parse.Promise.when(appInfoPromises)
+      .then(function() {
+        Array.prototype.slice.call(arguments).forEach(app => {
+          AppsManager.addApp(app);
+        });
+        this.setState({ configLoadingState: AsyncStatus.SUCCESS });
+      }.bind(this)).fail(({ error }) => {
+        this.setState({
+          configLoadingError: error,
+          configLoadingState: AsyncStatus.FAILED
+        });
+      });
   }
 
   render() {
@@ -200,7 +210,6 @@ class Dashboard extends React.Component {
         <AppsIndex newFeaturesInLatestVersion={this.state.newFeaturesInLatestVersion}/>
       </AccountView>
     );
-
 
     return <Router history={history}>
       <Redirect from='/' to='/apps' />

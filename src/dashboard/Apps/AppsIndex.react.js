@@ -14,13 +14,14 @@ import html          from 'lib/htmlString';
 import Icon          from 'components/Icon/Icon.react';
 import joinWithFinal from 'lib/joinWithFinal';
 import LiveReload    from 'components/LiveReload/LiveReload.react';
+import NewAppDialog  from 'dashboard/Apps/NewAppDialog.react';
 import pluralize     from 'lib/pluralize';
 import prettyNumber  from 'lib/prettyNumber';
 import React         from 'react';
 import styles        from 'dashboard/Apps/AppsIndex.scss';
 import { center }    from 'stylesheets/base.scss';
 import { Link }      from 'react-router';
-import AppBadge         from 'components/AppBadge/AppBadge.react';
+import AppBadge      from 'components/AppBadge/AppBadge.react';
 
 function dash(value, content) {
   if (value === undefined) {
@@ -102,7 +103,7 @@ let AppCard = ({
 export default class AppsIndex extends React.Component {
   constructor() {
     super();
-    this.state = { search: '' };
+    this.state = { search: '', dialogOpen: false };
     this.focusField = this.focusField.bind(this);
   }
 
