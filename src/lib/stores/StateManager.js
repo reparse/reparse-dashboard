@@ -23,7 +23,7 @@ export function getAppState(name, app) {
     throw new Error('Cannot get state without an app');
   }
   if (!name) {
-    throw new Error('Cannot get state without a state identifier');
+    throw new Error('Cannot get app state without a state identifier');
   }
   if (!appStates[app.applicationId]) {
     appStates[app.applicationId] = {};
@@ -49,7 +49,7 @@ export function setAppState(name, app, state) {
 
 export function getGlobalState(name) {
   if (!name) {
-    throw new Error('Cannot get state without a state identifier');
+    throw new Error('Cannot get global state without a state identifier');
   }
   let state = globalStates[name];
   if (!state) {

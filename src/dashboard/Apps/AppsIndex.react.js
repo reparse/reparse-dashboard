@@ -141,7 +141,7 @@ export default class AppsIndex extends React.Component {
             <div className={styles.alert}>You don't have any apps</div>
             <a href='javascript:;' role='button' className={styles.cta} onClick={() => this.setState({ dialogOpen: true })}>Create a new app</a>
           </div>
-          <NewAppDialog open={this.state.dialogOpen} onCancel={() => this.setState({ dialogOpen: false })} />
+          <NewAppDialog open={this.state.dialogOpen} onCancel={() => this.setState({ dialogOpen: false })} processApps={this.props.processApps} />
         </div>
       );
     }
