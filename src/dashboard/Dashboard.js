@@ -109,6 +109,7 @@ const PARSE_DOT_COM_SERVER_INFO = {
 class Dashboard extends React.Component {
   constructor(props) {
     super();
+    var self = this;
     this.state = {
       configLoadingError: '',
       configLoadingState: AsyncStatus.PROGRESS,
@@ -207,7 +208,7 @@ class Dashboard extends React.Component {
 
     const AppsIndexPage = () => (
       <AccountView section='Your Apps'>
-        <AppsIndex newFeaturesInLatestVersion={this.state.newFeaturesInLatestVersion}/>
+        <AppsIndex processApps={this.processApps.bind(this)} newFeaturesInLatestVersion={this.state.newFeaturesInLatestVersion}/>
       </AccountView>
     );
 

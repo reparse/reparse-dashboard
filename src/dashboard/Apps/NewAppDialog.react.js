@@ -36,8 +36,16 @@ export default class NewAppDialog extends React.Component {
     AdminApp.setParseKeys();
     return AdminApp.apiRequest('POST', 'apps', { appName: this.state.name })
       .then((data) => {
-        const apps = data.results;
-        this.processApps(apps);
+        const app = data.app;
+        return app.slug;
+      })
+      .then((slug) => {
+        return AdminApp.apiRequest('GET', 'apps', {})
+          .then((data) => {
+            const apps = data.results;
+            this.props.processApps(apps);
+            return slug;
+          });
       })
       .fail(this.props.onAuthError);
       return;
