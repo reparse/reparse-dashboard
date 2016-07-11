@@ -111,6 +111,9 @@ export function monthsFrom(date, delta) {
 }
 
 export function dateStringUTC(date) {
+  if (typeof date === "string") {
+    date = new Date(date);
+  }
   let full = String(date.getUTCDate()) + ' ' +
     shortMonth(date.getUTCMonth()) + ' ' +
     String(date.getUTCFullYear()) + ' at ';
