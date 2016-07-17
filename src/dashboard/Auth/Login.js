@@ -17,33 +17,32 @@ export default class Login extends React.Component {
 
 		this.state = {
 			requestInProcess: false,
-			errors: [],
+			inputErrors: [],
 			backendErrors: []
 		};
 	}
 
 	validate() {
-		const errors = this.state.backendErrors;
-
-		this.state.backendErrors = [];
+		const inputErrors = [];
 
 		if (!this.refs.username.value.length) {
-			errors.push('Username must be non-empty.');
+			inputErrors.push('Username must be non-empty.');
 		}
 
 		if (!this.refs.password.value.length) {
-			errors.push('Password must be non-empty.');
+			inputErrors.push('Password must be non-empty.');
 		}
 
-		this.setState({ errors });
+		this.setState({ inputErrors });
 	}
 
 	handleSubmit(e) {
 		e.preventDefault();
 		this.validate();
-		if (this.state.errors.length) {
+		if (this.state.inputErrors.length) {
 			return;
 		}
+		this.setState({ backendErrors: [] });
 
 		AdminApp.setParseKeys();
 
@@ -71,9 +70,12 @@ export default class Login extends React.Component {
 						<LoginRow
 							label='Password'
 							input={<input onChange={this.validate.bind(this)} ref='password' />} />
-						{this.state.errors.length ?
+						{this.state.inputErrors.length || this.state.backendErrors.length ?
 							<div className={styles.error}>
-								{this.state.errors.map((error, i) => <div key={i}>{error}</div>)}
+								{[]
+									.concat(this.state.inputErrors)
+									.concat(this.state.backendErrors)
+									.map((error, i) => <div key={i}>{error}</div>)}
 							</div> : null}
 						<div className={styles.footer}>
 							<div className={verticalCenter} style={{ width: '100%' }}>
@@ -82,7 +84,7 @@ export default class Login extends React.Component {
 						</div>
 						<input
 							type='submit'
-							disabled={this.state.errors.length || this.state.requestInProcess}
+							disabled={this.state.inputErrors.length || this.state.requestInProcess}
 							onClick={this.handleSubmit.bind(this)}
 							className={styles.submit} />
 					</form>
