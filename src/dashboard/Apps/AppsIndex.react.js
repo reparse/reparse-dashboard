@@ -123,7 +123,7 @@ export default class AppsIndex extends React.Component {
   }
 
   focusField() {
-    if (this.refs.search) {
+    if (this.refs.search && !this.state.dialogOpen) {
       this.refs.search.focus();
     }
   }
@@ -181,6 +181,7 @@ export default class AppsIndex extends React.Component {
           )}
         </ul>
         {upgradePrompt}
+        <NewAppDialog open={this.state.dialogOpen} onCancel={() => this.setState({ dialogOpen: false })} processApps={this.props.processApps} />
       </div>
     );
   }
