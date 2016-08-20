@@ -93,6 +93,7 @@ let AppCard = ({
       <Metric number={dash(app.requestLimit, Math.floor(app.requestLimit / 20))} label='background job' />
       <Metric number={dash(app.requestLimit, '$' + (app.requestLimit - 30) * 10)} label='monthly' />
       <a href={html`/apps/${app.slug}/settings`} className={styles.edit} onClick={(e) => {
+          e.preventDefault();
           e.stopPropagation();
           history.pushState(null, html`/apps/${app.slug}/settings`);
         }}>Edit</a>
