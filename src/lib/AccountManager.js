@@ -7,17 +7,27 @@
  */
 import { abortableGet, put, post, del } from 'lib/AJAX';
 import { unescape }                     from 'lib/StringEscaping';
+import AdminApp                         from 'dashboard/AdminApp';
 
 let currentUser = null;
-let xhrMap = {};
+;let xhrMap = {};
 
 let AccountManager = {
   init() {
-    let accountData = document.getElementById('accountData');
-    if (!accountData) {
-      return;
-    }
-    currentUser = JSON.parse(unescape(accountData.innerHTML));
+    currentUser = Promise.all([
+        AdminApp.apiRequest('GET', 'users/me'),
+        AdminApp.apiRequest('GET', 'account/keys')
+      ])
+      .then(function([ me, keys ]) {
+        const user = {
+          email: me.email,
+          has_password: true, // TODO: change after social login support
+          name: me.username,
+          account_keys: keys
+        };
+        console.log(user);
+        return user;
+      });
   },
 
   currentUser() {

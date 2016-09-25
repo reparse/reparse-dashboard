@@ -29,6 +29,7 @@ import { dateStringUTC }       from 'lib/DateUtils';
 
 const DEFAULT_LABEL_WIDTH = 56;
 const XHR_KEY = 'AccountOverview';
+const BILLING_SUPPORTS = false;
 
 export default class AccountOverview extends React.Component {
   constructor() {
@@ -37,8 +38,8 @@ export default class AccountOverview extends React.Component {
       showChangePasswordModal: false,
       currentPassword: '',
       newPassword: '',
-      email: AccountManager.currentUser().email,
-      name: AccountManager.currentUser().name,
+      email: null,
+      name: null,
 
       showAccountKeyModal: false,
       accountKeyName: '',
@@ -52,7 +53,19 @@ export default class AccountOverview extends React.Component {
       linkedAccounts: null,
 
       saveState: null,
+
+      cc_last4: null, // TODO get from user,
+      stripe_credit: null, // TODO get from user,
+      account_keys: null
     };
+    AccountManager.currentUser()
+      .then(user =>  {
+        this.setState({
+          email: user.email,
+          name: user.name,
+          account_keys: user.account_keys
+        });
+      });
   }
 
   componentDidMount() {
@@ -116,11 +129,11 @@ export default class AccountOverview extends React.Component {
             this.setState({showAccountKeyModal: true});
           }} />
         } />
-      { AccountManager.currentUser().account_keys.length > 0 ? <Field
+      { this.state.account_keys && this.state.account_keys.length > 0 ? <Field
         labelWidth={DEFAULT_LABEL_WIDTH}
         label={<Label text='Existing keys' />}
         input={<FormTable
-          items={AccountManager.currentUser().account_keys.map(key => ({
+          items={this.state.account_keys.map(key => ({
             title: key.name,
             onDelete: () => {
               this.setState({
@@ -350,7 +363,7 @@ export default class AccountOverview extends React.Component {
       {accountInfoFields}
       {accountKeysFields}
       {linkedAccountsFields}
-      {billingInfoFields}
+      {BILLING_SUPPORTS && billingInfoFields}
       <Toolbar section='Account' subsection='Settings' />
       {changePasswordModal}
       {accountKeyModal}
@@ -360,10 +373,9 @@ export default class AccountOverview extends React.Component {
   }
 
   render() {
-    let user = AccountManager.currentUser();
     let initialFields = {
-      accountCredit: user.stripe_credit,
-      cc_last4: user.cc_last4, //null means user has not added a credit card
+      accountCredit: this.state.stripe_credit,
+      cc_last4: this.state.cc_last4, //null means user has not added a credit card
       ccSecurityCode: '',
       ccExp: '',
     }
