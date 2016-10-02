@@ -25,7 +25,6 @@ let AccountManager = {
           name: me.username,
           account_keys: keys
         };
-        console.log(user);
         return user;
       });
   },
@@ -38,37 +37,48 @@ let AccountManager = {
   },
 
   resetPasswordAndEmailAndName(currentPassword, newPassword, newEmail, newName) {
-    let path = '/account';
-    return put(path, {
-      confirm_password: currentPassword,
-      'user[password]':newPassword,
-      'user[email]': newEmail,
-      'user[name]': newName,
-    });
+    return AdminApp.apiRequest('GET', '/users/me')
+      .then(function(me) {
+        return Promise.all([
+          AdminApp.apiRequest(
+            'PUT',
+            '/users/' + me.objectId,
+            {
+              email: newEmail,
+              username: newName,
+            }),
+          AdminApp.apiRequest(
+            'POST',
+            '/users/changePassword',
+            {
+              password: newPassword,
+              oldPassword: currentPassword })
+        ]);
+      });
   },
 
   createAccountKey(keyName) {
-    let path = '/account/keys';
-    let promise = post(path, {name: keyName});
-    promise.then(newKey => {
-      let hiddenKey = {...newKey, token: '\u2022\u2022' + newKey.token.substr(newKey.token.length - 4)};
-      //TODO: save the account key better. This currently only works because everywhere that uses
-      // the account keys happens to rerender after the account keys change anyway.
-      currentUser.account_keys.unshift(hiddenKey);
-    });
-    return promise;
+    return AdminApp.apiRequest(
+      'POST',
+      '/account/keys',
+      {
+        name: keyName
+      })
+      .then(function(newKey) {
+        //TODO: save the account key better. This currently only works because everywhere that uses
+        // the account keys happens to rerender after the account keys change anyway.
+        currentUser = null; // The data in promise is old
+	return newKey;
+      });
   },
 
   deleteAccountKeyById(id) {
-    let path = '/account/keys/' + id.toString();
-    let promise = del(path);
-    promise.then(() => {
-
-      //TODO: delete the account key better. This currently only works because everywhere that uses
-      // the account keys happens to rerender after the account keys change anyway.
-      currentUser.account_keys = currentUser.account_keys.filter(key => key.id != id);
-    });
-    return promise;
+    return AdminApp.apiRequest('DELETE', '/account/keys/' + id)
+      .then(() => {
+        //TODO: delete the account key better. This currently only works because everywhere that uses
+        // the account keys happens to rerender after the account keys change anyway.
+        currentUser = null; // The data in promise is old
+      });
   },
 
   fetchLinkedAccounts(xhrKey) {

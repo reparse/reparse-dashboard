@@ -146,7 +146,7 @@ export default class AccountOverview extends React.Component {
             notes: [
               {
                 key: 'Key',
-                value: '\u2022\u2022' + key.token,
+                value: '\u2022\u2022' + key.token.substr(key.token.length - 4),
                 strong: true,
               },
               {
@@ -298,6 +298,7 @@ export default class AccountOverview extends React.Component {
         return AccountManager.createAccountKey(this.state.accountKeyName);
       }}
       onSuccess={newKey => {
+        this.state.account_keys.unshift(newKey);// TODO: maybe we have to refresh current user
         this.setState({
           showNewAccountKeyModal: true,
           newAccountKey: newKey.token,
@@ -350,14 +351,21 @@ export default class AccountOverview extends React.Component {
       submitText='Yes, delete it'
       inProgressText={'Deleting\u2026'}
       onSubmit={() => {
-        return AccountManager.deleteAccountKeyById(this.state.accountKeyIdToDelete);
+        const id = this.state.accountKeyIdToDelete;
+        return AccountManager.deleteAccountKeyById(id)
+          .then(() => {
+            // TODO: maybe we have to refresh current user
+            const account_keys = this.state.account_keys
+              .filter(key => key.id != id);
+            this.setState({ account_keys });
+          });
       }}
       onClose={() => {
         this.setState({showDeleteAccountKeyModal: false});
       }}
       clearFields={() => {
         this.setState({accountKeyIdToDelete: 0});
-      }} />
+      }} />;
 
     return <div className={styles.settings_page}>
       {accountInfoFields}
